@@ -1,21 +1,60 @@
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-bold text-blue-600 mb-4">
-        Olá, mundo! 👋
-      </h1>
-      <p className="text-lg text-gray-700 text-center">
-        Esse é o meu primeiro projeto com <span className="font-semibold text-black">Next.js</span> e <span className="font-semibold text-black">Tailwind CSS</span> 🎉
-      </p>
-
-      <a
-        href="https://tailwindcss.com/docs"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-6 inline-block px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-md transition"
-      >
-        Ver documentação do Tailwind
-      </a>
+    <main> 
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+        <form className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              E-mail
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="seuemail@exemplo.com"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Senha
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center">
+              <input type="checkbox" className="form-checkbox text-blue-600 rounded" />
+              <span className="ml-2 text-sm text-gray-600">Lembrar-me</span>
+            </label>
+            <a href="#" className="text-sm text-blue-500 hover:underline">
+              Esqueceu a senha?
+            </a>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition duration-300"
+          >
+            Entrar
+          </button>
+        </form>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Não tem uma conta?{' '}
+          <a href="#" className="text-blue-500 hover:underline">
+            Cadastre-se
+          </a>
+        </p>
+      </div>
+    </div>
     </main>
   );
 }
