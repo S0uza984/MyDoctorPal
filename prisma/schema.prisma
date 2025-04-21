@@ -9,7 +9,7 @@ datasource db {
 }
 
 model anotacao {
-  ID_Anotacao  Int         @id @default(autoincrement())
+  ID_Anotacao Int       @id @default(autoincrement())
   ID_Consulta Int
   Conteudo    String?   @db.VarChar(200)
   consultas   consultas @relation(fields: [ID_Consulta], references: [ID_Consulta], onDelete: Cascade, onUpdate: NoAction, map: "anotacao_ibfk_1")
@@ -25,7 +25,7 @@ model consultas {
   Horario     DateTime           @db.Time(0)
   Descricao   String?            @db.VarChar(200)
   Status_     consultas_Status_? @default(CONFIRMADA)
-  anotacao    anotacao[]         @ignore
+  anotacao    anotacao[]
   medicos     medicos            @relation(fields: [ID_Medico], references: [ID_Medico], onDelete: Cascade, onUpdate: NoAction, map: "consultas_ibfk_1")
   pacientes   pacientes          @relation(fields: [ID_Paciente], references: [ID_Paciente], onDelete: Cascade, onUpdate: NoAction, map: "consultas_ibfk_2")
 
@@ -34,7 +34,7 @@ model consultas {
 }
 
 model formularios {
-  ID_Formulario           Int                @id @default(autoincrement())
+  ID_Formulario           Int               @id @default(autoincrement())
   ID_Paciente             Int
   Altura                  Int
   Peso                    Int
@@ -66,7 +66,7 @@ model pacientes {
   ID          Int
   Nascimento  DateTime      @db.Date
   consultas   consultas[]
-  formularios formularios[] @ignore
+  formularios formularios[]
   usuarios    usuarios      @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "pacientes_ibfk_1")
 
   @@index([ID], map: "ID")

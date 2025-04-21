@@ -12,14 +12,14 @@ export default function Home() {
         <p className="text-gray-600 mb-6">Escolha seu tipo de acesso:</p>
 
         <Link
-          href="/auth/patient"
+          href="/login/paciente"
           className="block w-full bg-blue-500 text-white py-2 rounded-full font-semibold mb-3"
         >
           Sou Paciente
         </Link>
 
         <Link
-          href="/auth/doctor"
+          href="/login/doutor"
           className="block w-full border border-blue-500 text-blue-500 py-2 rounded-full font-semibold"
         >
           Sou Médico

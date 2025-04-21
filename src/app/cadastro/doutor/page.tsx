@@ -14,7 +14,7 @@ export default function DoctorRegister() {
             <input type="text" placeholder="CRM" className="w-full border p-2 rounded" />
             <input type="text" placeholder="Especialidade" className="w-full border p-2 rounded" />
             <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold">Criar Conta</button>
-            <p className="text-sm text-center">Já tem uma conta? <a href="/auth/doctor" className="text-blue-500 font-semibold">Entrar</a></p>
+            <p className="text-sm text-center">Já tem uma conta? <a href="/login/doutor" className="text-blue-500 font-semibold">Entrar</a></p>
           </div>
         </div>
       </div>
