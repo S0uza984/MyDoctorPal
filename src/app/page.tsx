@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-md w-80 p-6 text-center">
-        <div className="bg-blue-500 text-white text-lg font-bold px-4 py-2 rounded-t-md flex justify-between">
+        <div className="bg-blue-500 text-white text-lg font-bold px-4 py-2 rounded-t-md flex justify-between items-center">
           <span>MyDoctorPal</span>
           <span className="text-sm cursor-pointer">PT | EN</span>
         </div>

@@ -6,7 +6,7 @@ export default function DoctorRegister() {
             <span>MyDoctorPal</span>
             <span>Cadastro de Médico</span>
           </div>
-          <div className="p-6 space-y-3">
+          <div className="p-6 space-y-3 text-gray-800">
             <input type="text" placeholder="Nome Completo" className="w-full border p-2 rounded" />
             <input type="email" placeholder="Email" className="w-full border p-2 rounded" />
             <input type="password" placeholder="Senha" className="w-full border p-2 rounded" />

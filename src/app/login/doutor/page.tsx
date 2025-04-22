@@ -6,12 +6,12 @@ export default function DoctorLogin() {
             <span>MyDoctorPal</span>
             <span className="text-sm cursor-pointer">PT | EN</span>
           </div>
-          <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-center">Login de Médico</h2>
-            <input type="email" placeholder="Email" className="w-full border p-2 mb-3 rounded" />
-            <input type="password" placeholder="Senha" className="w-full border p-2 mb-4 rounded" />
+          <div className="p-6 text-black">
+            <h2 className="text-lg font-semibold mb-4 text-center text-black">Login de Médico</h2>
+            <input type="email" placeholder="Email" className="w-full border p-2 mb-3 rounded text-gray-800" />
+            <input type="password" placeholder="Senha" className="w-full border p-2 mb-4 rounded text-gray-800" />
             <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mb-2">Entrar</button>
-            <p className="text-sm text-center">Não tem conta? <a href="/cadastro/doutor" className="text-blue-500 font-semibold">Registre-se</a></p>
+            <p className="text-sm text-center">Não tem conta? <a href="/cadastro/doutor" className="text-blue-500 font-semibold text-gray-800">Registre-se</a></p>
           </div>
         </div>
       </div>
