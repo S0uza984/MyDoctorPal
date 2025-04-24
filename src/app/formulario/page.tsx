@@ -5,6 +5,9 @@ import { useState } from 'react';
 export default function Formulario() {
   const [cirurgia, setCirurgia] = useState(false);
   const [controlado, setControlado] = useState(false);
+  const cirurgiaHandler = () => {
+    setCirurgia(true);
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -27,7 +30,7 @@ export default function Formulario() {
           <div>
             <label className="block font-medium mb-1">Já realizou alguma cirurgia?</label>
             <label className="mr-4"><input type="radio" name="cirurgia" onClick={() => setCirurgia(false)} /> Não</label>
-            <label><input type="radio" name="cirurgia" onClick={() => setCirurgia(true)} /> Sim</label>
+            <label><input type="radio" name="cirurgia" onClick= {cirurgiaHandler} /> Sim</label>
             {cirurgia && (
               <textarea placeholder="Descreva as cirurgias realizadas..." className="w-full border p-2 rounded mt-2"></textarea>
             )}
@@ -35,7 +38,7 @@ export default function Formulario() {
           <div>
             <label className="block font-medium mb-1">Faz uso de remédio controlado?</label>
             <label className="mr-4"><input type="radio" name="controlado" onClick={() => setControlado(false)} /> Não</label>
-            <label><input type="radio" name="controlado" onClick={() => setControlado(true)} /> Sim</label>
+            <label><input type="radio" name="controlado" onClick={()=>setControlado(true)} /> Sim</label>
             {controlado && (
               <textarea placeholder="Quais remédios controlados utiliza?" className="w-full border p-2 rounded mt-2"></textarea>
             )}
