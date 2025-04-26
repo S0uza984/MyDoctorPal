@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import LoadingCadastro from "../../../components/loadings/LoadingCadastro";
 export default function DoctorRegister() {
     const [formData, setFormData] = useState({
       nome: "",
@@ -14,6 +14,7 @@ export default function DoctorRegister() {
     })
     const [mensagem, setMensagem] = useState("");
     const Router = useRouter();
+    const [Loading, setLoading] = useState(false);
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const {name, value} = e.target;
@@ -48,7 +49,10 @@ export default function DoctorRegister() {
       const data = await response.json();
       if (response.ok){
         setMensagem(data.message);
-        Router.push("/login/doutor");
+        setLoading(true);
+        setTimeout(() => {
+          Router.push("/login/doutor");
+        },2000);
       }
       else{
         setMensagem(data.error);
@@ -57,7 +61,10 @@ export default function DoctorRegister() {
     catch(error){
       console.error("Erro:", error);
       setMensagem("Erro ao conectar com o servidor.");} 
-
+    }
+    
+    if (Loading) {
+      return <LoadingCadastro />;
     }
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -79,7 +86,7 @@ export default function DoctorRegister() {
           {mensagem && (
           <p className="text-red-500 text-sm text-center">{mensagem}</p>
         )}
-           <p className="text-sm text-center text-black">Já tem uma conta? <a href="/login/doutor" className="text-blue-500 font-semibold">Entrar</a></p>
+           <p className="text-sm text-center text-black">Já tem uma conta? <a href="/login/doutor" className="text-blue-500 font-semibold" >Entrar</a></p>
         </div>
       </div>
     );
