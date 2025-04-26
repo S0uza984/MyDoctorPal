@@ -17,7 +17,10 @@ export default function CadastroPaciente() {
   const Router = useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Evita o reload da página
-
+    if (formData.cpf.length !== 11) {
+      setMensagem("O CPF deve ter exatamente 11 caracteres.");
+      return;
+    }
     try {
       const response = await fetch("/api/cadastro/paciente", {
         method: "POST",
@@ -62,7 +65,7 @@ export default function CadastroPaciente() {
             name="nome"
             placeholder="Nome Completo"
             className="w-full border p-2 rounded"
-            value={formData.nome}
+            value= {formData.nome}
             onChange={handleChange}
           />
           <input
