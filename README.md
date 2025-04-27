@@ -83,9 +83,9 @@ Para trabalhar em grupo de forma organizada, siga este fluxo:
 #### **2. Criação de Branches**
 - Cada membro deve criar uma branch, apartir da dev para trabalhar em uma nova funcionalidade ou correção de bug.
 - Nomeie as branches de forma descritiva:
-  - Exemplo: `feature-login`, `fix-database-connection`.
+  -  Exemplo: `feature-login`, `fix-database-connection`.
 -Comandos para criar uma branch de feature:
--git checkout -b dev
+-git checkout dev
 -git pull origin dev
 -git checkout -b feature-nome-da-tarefa
 

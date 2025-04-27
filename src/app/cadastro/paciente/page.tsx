@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingCadastro from "../../../components/loadings/LoadingCadastro";
 
 export default function CadastroPaciente() {
   const [formData, setFormData] = useState({
@@ -15,9 +16,14 @@ export default function CadastroPaciente() {
 
   const [mensagem, setMensagem] = useState("");
   const Router = useRouter();
+  const [Loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Evita o reload da página
-
+    if (formData.cpf.length !== 11) {
+      setMensagem("O CPF deve ter exatamente 11 caracteres.");
+      return;
+    }
     try {
       const response = await fetch("/api/cadastro/paciente", {
         method: "POST",
@@ -30,16 +36,25 @@ export default function CadastroPaciente() {
       const data = await response.json(); // Converte a resposta para objeto JavaScript
 
       if (response.ok) {
+        setLoading(true);
         setMensagem(data.message || "Paciente cadastrado com sucesso!");
-        Router.push("/login/paciente");
-      } else {
+        setTimeout( () => {
+          Router.push("/login/paciente")},
+          2000)
+        }
+        
+       else {
         setMensagem(data.error);
       }
-    } catch (error) {
+    }
+     catch (error) {
       console.error("Erro:", error);
       setMensagem("Erro ao conectar com o servidor.");
     }
   };
+  if (Loading){
+    return <LoadingCadastro />;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target; // Obtém o nome e o valor do campo alterado
@@ -62,7 +77,7 @@ export default function CadastroPaciente() {
             name="nome"
             placeholder="Nome Completo"
             className="w-full border p-2 rounded"
-            value={formData.nome}
+            value= {formData.nome}
             onChange={handleChange}
           />
           <input
@@ -114,9 +129,9 @@ export default function CadastroPaciente() {
         {mensagem && (
           <p className="text-sm text-center text-red-500">{mensagem}</p>
         )}
-        <p className="text-sm text-center">
+        <p className="text-sm text-center text-gray-800">
           Já tem uma conta?{" "}
-          <a href="/login/paciente" className="text-blue-500 font-semibold text-black">
+          <a href="/login/paciente" className="text-blue-500 font-semibold">
             Entrar
           </a>
         </p>
