@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model anotacao {
+  ID_Anotacao Int       @id @default(autoincrement())
+  ID_Consulta Int
+  Conteudo    String?   @db.VarChar(200)
+  consultas   consultas @relation(fields: [ID_Consulta], references: [ID_Consulta], onDelete: Cascade, onUpdate: NoAction, map: "anotacao_ibfk_1")
+
+  @@index([ID_Consulta], map: "ID_Consulta")
+}
+
+model consultas {
+  ID_Consulta Int                @id @default(autoincrement())
+  ID_Medico   Int
+  ID_Paciente Int
+  Data_       DateTime           @db.Date
+  Horario     DateTime           @db.Time(0)
+  Descricao   String?            @db.VarChar(200)
+  Status_     consultas_Status_? @default(CONFIRMADA)
+  anotacao    anotacao[]
+  medicos     medicos            @relation(fields: [ID_Medico], references: [ID_Medico], onDelete: Cascade, onUpdate: NoAction, map: "consultas_ibfk_1")
+  pacientes   pacientes          @relation(fields: [ID_Paciente], references: [ID_Paciente], onDelete: Cascade, onUpdate: NoAction, map: "consultas_ibfk_2")
+
+  @@index([ID_Medico], map: "ID_Medico")
+  @@index([ID_Paciente], map: "ID_Paciente")
+}
+
+model formularios {
+  ID_Formulario           Int               @id @default(autoincrement())
+  ID_Paciente             Int
+  Altura                  Int
+  Peso                    Int
+  Sexo                    formularios_Sexo?
+  Cirurgia                Boolean?
+  Cirurgia_Resposta       String?           @db.VarChar(100)
+  Med_Continuo            Boolean?
+  Med_Continuo_Resposta   String?           @db.VarChar(100)
+  Med_Controlado          Boolean?
+  Med_Controlado_Resposta String?           @db.VarChar(100)
+  pacientes               pacientes         @relation(fields: [ID_Paciente], references: [ID_Paciente], onDelete: Cascade, onUpdate: NoAction, map: "formularios_ibfk_1")
+
+  @@index([ID_Paciente], map: "ID_Paciente")
+}
+
+model medicos {
+  ID_Medico     Int         @id @default(autoincrement())
+  ID            Int
+  CRM           String      @unique(map: "CRM") @db.Char(6)
+  Especialidade String      @db.VarChar(100)
+  consultas     consultas[]
+  usuarios      usuarios    @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "medicos_ibfk_1")
+
+  @@index([ID], map: "ID")
+}
+
+model pacientes {
+  ID_Paciente Int           @id @default(autoincrement())
+  ID          Int
+  Nascimento  DateTime      @db.Date
+  consultas   consultas[]
+  formularios formularios[]
+  usuarios    usuarios      @relation(fields: [ID], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "pacientes_ibfk_1")
+
+  @@index([ID], map: "ID")
+}
+
+model usuarios {
+  ID        Int         @id @default(autoincrement())
+  CPF       String      @db.Char(11)
+  Nome      String      @db.VarChar(100)
+  Email     String      @unique(map: "Email") @db.VarChar(100)
+  Senha     String      @db.VarChar(30)
+  Telefone  String      @db.Char(11)
+  medicos   medicos[]
+  pacientes pacientes[]
+}
+
+enum formularios_Sexo {
+  Masculino
+  Feminino
+}
+
+enum consultas_Status_ {
+  CONFIRMADA
+  NEGADA
+}
