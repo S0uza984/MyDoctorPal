@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingCadastro from "../../../components/loadings/LoadingCadastro";
+import Link from "next/link";
 export default function DoctorRegister() {
     const [formData, setFormData] = useState({
       nome: "",
@@ -82,11 +83,11 @@ export default function DoctorRegister() {
             <input type="text" placeholder="CPF" className="w-full border p-2 rounded" name="cpf" value= {formData.cpf} onChange={handleChange}/>
             <input type="text" placeholder="Especialidade" className="w-full border p-2 rounded" name="especialidade" value= {formData.especialidade} onChange={handleChange}/>
             <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold" type="submit">Criar Conta</button>
+            <p className="text-sm text-center text-black">Já tem uma conta? <Link href="/login/doutor" className="text-blue-500 font-semibold" >Entrar</Link></p>
           </form>
           {mensagem && (
           <p className="text-red-500 text-sm text-center">{mensagem}</p>
         )}
-           <p className="text-sm text-center text-black">Já tem uma conta? <a href="/login/doutor" className="text-blue-500 font-semibold" >Entrar</a></p>
         </div>
       </div>
     );

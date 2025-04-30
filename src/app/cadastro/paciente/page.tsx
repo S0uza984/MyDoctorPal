@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingCadastro from "../../../components/loadings/LoadingCadastro";
+import Link from "next/link";
 
 export default function CadastroPaciente() {
   const [formData, setFormData] = useState({
@@ -125,16 +126,16 @@ export default function CadastroPaciente() {
           >
             Criar Conta
           </button>
+          <p className="text-sm text-center text-gray-800">
+          Já tem uma conta?{" "}
+          <Link href="/login/paciente" className="text-blue-500 font-semibold">
+            Entrar
+          </Link>
+        </p>
         </form>
         {mensagem && (
           <p className="text-sm text-center text-red-500">{mensagem}</p>
         )}
-        <p className="text-sm text-center text-gray-800">
-          Já tem uma conta?{" "}
-          <a href="/login/paciente" className="text-blue-500 font-semibold">
-            Entrar
-          </a>
-        </p>
       </div>
     </div>
   );

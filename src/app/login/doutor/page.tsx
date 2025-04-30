@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function DoctorLogin() {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -11,7 +12,7 @@ export default function DoctorLogin() {
             <input type="email" placeholder="Email" className="w-full border p-2 mb-3 rounded text-gray-800" />
             <input type="password" placeholder="Senha" className="w-full border p-2 mb-4 rounded text-gray-800" />
             <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mb-2">Entrar</button>
-            <p className="text-sm text-center">Não tem conta? <a href="/cadastro/doutor" className="text-blue-500 font-semibold">Registre-se</a></p>
+            <p className="text-sm text-center">Não tem conta? <Link href="/cadastro/doutor" className="text-blue-500 font-semibold">Registre-se</Link></p>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react"; // Importando o SessionProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ export const metadata = {
   description: "Medical Assistant",
 };
 
-export default function RootLayout({ children }) {
+/*export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body
@@ -26,4 +27,19 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
+}*/
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    // Definindo o layout raiz com as tags <html> e <body>
+    <html lang="pt-BR">
+      <body>
+        {/* Envolvendo os filhos com o SessionProvider */}
+        <SessionProvider>
+          {children}
+        </SessionProvider>
+      </body>
+    </html>
+  );
 }
+
