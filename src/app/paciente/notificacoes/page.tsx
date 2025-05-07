@@ -1,35 +1,45 @@
+"use client";
 export default function Notificacoes() {
-    return (
-      <div className="min-h-screen flex">
-        <aside className="w-48 bg-white border-r p-4 space-y-4">
-          <h4 className="text-blue-500 font-semibold">Consultas</h4>
-          <ul className="space-y-2 text-gray-700 text-sm">
-            <li>Histórico</li>
-            <li className="font-semibold text-blue-500">Notificações</li>
-            <li>Perfil</li>
-            <li>Sair</li>
-          </ul>
-        </aside>
-        <main className="flex-1">
-          <header className="bg-blue-500 text-white px-6 py-3 flex justify-between">
-            <span>MyDoctorPal</span>
-            <span>Olá, João</span>
-          </header>
-          <section className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Notificações</h2>
-            <div className="bg-blue-100 border border-blue-300 rounded p-4 mb-4 text-sm">
-              <div className="font-bold">Consulta Confirmada</div>
-              <div>Dr. Carlos Silva - Cardiologia</div>
-              <div>20/04/2025 - 14:30</div>
-            </div>
-            <div className="bg-red-100 border border-red-300 rounded p-4 text-sm">
-              <div className="font-bold">Consulta Cancelada</div>
-              <div>Dra. Ana Souza - Clínica Geral</div>
-              <div>15/04/2025 - 10:00</div>
-            </div>
-          </section>
-        </main>
+  const notifications = [
+    {
+      id: 1,
+      type: "confirmed",
+      doctor: "Dr. Carlos Silva",
+      specialty: "Cardiologia",
+      date: "20/04/2025",
+      time: "14:30",
+    },
+    {
+      id: 2,
+      type: "canceled",
+      doctor: "Dra. Ana Souza",
+      specialty: "Clínica Geral",
+      date: "15/04/2025",
+      time: "10:00",
+    },
+  ];
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Notificações</h2>
+      <div className="space-y-3">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className={`p-3 rounded-lg border ${
+              notification.type === "confirmed"
+                ? "bg-blue-50 border-blue-200"
+                : "bg-red-50 border-red-200"
+            }`}
+          >
+            <h3 className="font-bold">
+              {notification.type === "confirmed" ? "Consulta Confirmada" : "Consulta Cancelada"}
+            </h3>
+            <p>{notification.doctor} - {notification.specialty}</p>
+            <p className="text-sm">{notification.date} - {notification.time}</p>
+          </div>
+        ))}
       </div>
-    );
-  }
-  
+    </div>
+  );
+}

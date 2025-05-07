@@ -1,6 +1,7 @@
 'use client';
 import Link from "next/link";
 import LoginFormP from "./login-form";
+import { useEffect } from "react";
 //import { auth } from "../../../auth";
 //import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react"; // Hook para obter a sessão do NextAuth
@@ -12,14 +13,19 @@ export default function PatientLogin() {
   
   // Se a sessão estiver carregando, exibe um loading
   if (status === "loading") {
-    return <p>Carregando...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-lg font-semibold">Carregando...</p>
+      </div>
+    );
   }
   
-    // Se o usuário já estiver logado, redireciona para o formulário
-  if (session?.user?.role === "paciente") {
-    router.push("/formulario");  // Redireciona para o formulário
-    return null;  // Retorna null para evitar renderização enquanto redireciona
-  }
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "paciente") {
+      router.push("/paciente"); // Redireciona para /paciente
+    }
+  }, [status, session, router]); // Dependências: reexecuta o efeito se status, session ou router mudarem
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
