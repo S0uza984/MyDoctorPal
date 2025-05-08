@@ -12,16 +12,12 @@ export async function middleware(req) {
   const role = token.role; // Obtém a role do token
   const pathname = req.nextUrl.pathname; // Obtém a rota acessada
 
-  // Verifica se a rota pertence ao paciente e bloqueia médicos
-  if (pathname.startsWith("/paciente") && role !== "paciente") {
-    return NextResponse.redirect(new URL("/acesso-negado", req.url));
-  }
-
-  // Verifica se a rota pertence ao médico e bloqueia pacientes
-  if (pathname.startsWith("/medico") && role !== "medico") {
-    return NextResponse.redirect(new URL("/acesso-negado", req.url));
-  }
-
+ if(pathname.startsWith("/paciente") && role !== "paciente"){
+    return NextResponse.redirect(new URL("/nao-permitida", req.url));
+ }
+ if(pathname.startsWith("/medico") && role !== "medico"){
+    return NextResponse.redirect(new URL("/nao-permitida", req.url));
+ }
   // Permite que a requisição continue
   return NextResponse.next();
 }
