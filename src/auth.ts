@@ -50,6 +50,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token?.role && session.user) {
         session.user.role = token.role as string;
       }
+      if (token?.name && session.user) {
+        session.user.name = token.name as string;
+      }
       return session;
     },
     async jwt({ token, user }) {
@@ -57,7 +60,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (user?.role) {
         token.role = user.role;
       }
+      if (user?.name) {
+        token.name = user.name;
+      }
       return token;
     },
   },
+  trustHost: true,
 });
