@@ -1,5 +1,5 @@
 'use client';
-
+import Link from "next/link";
 export default function NaoPermitida() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
@@ -8,12 +8,12 @@ export default function NaoPermitida() {
         <p className="text-gray-700 mb-6">
           Você não tem permissão para acessar esta página. Por favor, verifique suas credenciais ou entre em contato com o administrador.
         </p>
-        <a
+        <Link
           href="/"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
         >
           Voltar para a Página Inicial
-        </a>
+        </Link>
       </div>
     </div>
   );
