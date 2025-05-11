@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { findUserByCredentialsPaciente } from "./app/login/paciente/user";
+import { findUserByCredentialsMedico } from "./app/login/doutor/user";
 
 // Definindo a interface para as credenciais
 interface LoginCredentials {
@@ -22,25 +23,47 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Senha", type: "password" },
+        page: { label: "Page", type: "text" }, // Adiciona o campo 'page'
       },
       authorize: async (credentials: Record<string, string> | undefined): Promise<any> =>{
         if (!credentials?.email || !credentials?.password) return null;
 
-        // Verifica o usuário com base nas credenciais
-        const user = await findUserByCredentialsPaciente(
+        if (credentials?.page === "/login/paciente") {
+        // Verifica se o usuário é um paciente
+          const paciente = await findUserByCredentialsPaciente(
           credentials.email as string,
           credentials.password as string
         );
 
-        if (!user) return null;
+          if (paciente) {
+            return {
+              id: paciente.id,
+              name: paciente.name,
+              email: paciente.email,
+              role: "paciente",
+            };
+          }
+        } 
 
-        // Retorna o objeto do usuário com a role 'paciente'
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: "paciente",
-        };
+        if (credentials?.page === "/login/doutor") {
+        // Verifica se o usuário é um médico
+          const medico = await findUserByCredentialsMedico(
+          credentials.email as string,
+          credentials.password as string
+        );
+
+          if (medico) {
+            return {
+              id: medico.id,
+              name: medico.name,
+              email: medico.email,
+              role: "medico",
+            };
+          }
+        }
+
+        // Retorna null se nenhum usuário for encontrado
+        return null;
       },
     }),
   ],

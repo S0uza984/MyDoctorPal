@@ -22,7 +22,7 @@ export default function LoginFormP() {
       redirect: false, // Não redireciona automaticamente após login
       email,
       password,
-      page: "/login/paciente",
+      page: "/login/doutor",
     });
 
     // Verifica se o login foi bem-sucedido
@@ -32,7 +32,7 @@ export default function LoginFormP() {
     } else {
       console.log("Login bem-sucedido!");
       // Redireciona para o formulário após o login bem-sucedido
-      router.push("/paciente"); // Redireciona com router de next/navigation
+      router.push("/medico"); // Redireciona com router de next/navigation
     }
 
     setLoading(false); // Remover o estado de carregamento após a tentativa
