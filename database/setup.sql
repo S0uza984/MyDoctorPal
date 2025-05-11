@@ -1,4 +1,4 @@
-CREATE DATABASE mydoctorpal;
+CREATE DATABASE mydoctorpal2;
 USE mydoctorpal;
 CREATE TABLE Usuarios (
 ID INT AUTO_INCREMENT PRIMARY KEY,
