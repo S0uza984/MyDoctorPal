@@ -47,7 +47,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
               </a>
             </li>
             <li>
-              {/* Botão de logout */}
+
               <button
                 onClick={() => signOut({ callbackUrl: "/" })} // Redireciona para a página inicial após logout
                 className="block p-2 rounded-md text-red-600 hover:bg-red-100"

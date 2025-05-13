@@ -12,7 +12,7 @@ export default function MedicoLogin() {
   // Redireciona o usuário autenticado para /paciente
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role === "medico") {
-      router.push("/medico"); // Redireciona para a rota do medico
+      router.push("/medico/agenda"); // Redireciona para a rota do medico
     }
   }, [status, session, router]); // Dependências garantem que o efeito seja executado corretamente
 
