@@ -1,5 +1,5 @@
 'use client';
-
+import { signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -34,8 +34,11 @@ export default function Sidebar() {
             </li>
           ))}
           <li>
-            <button className="w-full text-left p-2 rounded-md text-red-600">
-              Sair
+          <button
+              onClick={() => signOut({ callbackUrl: "/" })} // Redireciona para a página inicial após logout
+              className="block p-2 rounded-md text-red-600 hover:bg-red-100"
+            >
+                Sair
             </button>
           </li>
         </ul>
