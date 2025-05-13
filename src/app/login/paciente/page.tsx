@@ -12,7 +12,7 @@ export default function PatientLogin() {
   // Redireciona o usuário autenticado para /paciente
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role === "paciente") {
-      router.push("/paciente"); // Redireciona para a rota do paciente
+      router.push("/paciente/dashboard"); // Redireciona para a rota do paciente
     }
   }, [status, session, router]); // Dependências garantem que o efeito seja executado corretamente
 
