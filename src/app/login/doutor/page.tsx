@@ -42,6 +42,9 @@ export default function MedicoLogin() {
               Registre-se
             </Link>
           </p>
+          <Link href="/" className="text-blue-500 font-semibold text-sm text-center block mt-2">
+            Voltar para a página inicial
+          </Link>
         </div>
       </div>
     </div>

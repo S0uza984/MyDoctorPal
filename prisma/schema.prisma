@@ -39,12 +39,12 @@ model formularios {
   Altura                  Int
   Peso                    Int
   Sexo                    formularios_Sexo?
-  Cirurgia                Boolean?
-  Cirurgia_Resposta       String?           @db.VarChar(100)
-  Med_Continuo            Boolean?
-  Med_Continuo_Resposta   String?           @db.VarChar(100)
-  Med_Controlado          Boolean?
-  Med_Controlado_Resposta String?           @db.VarChar(100)
+  Alergias                Boolean?
+  Alergias_Resposta       String?           @db.VarChar(100)
+  Medicamento            Boolean?
+  Medicamento_Resposta   String?           @db.VarChar(100)
+  Condicao_Medica          Boolean?
+  Condicao_Medica_Resposta String?           @db.VarChar(100)
   pacientes               pacientes         @relation(fields: [ID_Paciente], references: [ID_Paciente], onDelete: Cascade, onUpdate: NoAction, map: "formularios_ibfk_1")
 
   @@index([ID_Paciente], map: "ID_Paciente")

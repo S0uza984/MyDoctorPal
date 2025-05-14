@@ -40,7 +40,7 @@ export default function CadastroPaciente() {
         setLoading(true);
         setMensagem(data.message || "Paciente cadastrado com sucesso!");
         setTimeout( () => {
-          Router.push("/login/paciente")},
+          Router.push("/formulario")},
           2000)
         }
         
