@@ -3,11 +3,9 @@
 import { useState } from 'react';
 
 export default function Formulario() {
-  const [cirurgia, setCirurgia] = useState(false);
-  const [controlado, setControlado] = useState(false);
-  const cirurgiaHandler = () => {
-    setCirurgia(true);
-  }
+  const [alergia, setAlergia] = useState(false);
+  const [medicamento, setMedicamento] = useState(false);
+  const [condicao, setCondicao] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -28,25 +26,28 @@ export default function Formulario() {
             <label><input type="radio" name="sexo" /> Feminino</label>
           </div>
           <div>
-            <label className="block font-medium mb-1">Já realizou alguma cirurgia?</label>
-            <label className="mr-4"><input type="radio" name="cirurgia" onClick={() => setCirurgia(false)} /> Não</label>
-            <label><input type="radio" name="cirurgia" onClick= {cirurgiaHandler} /> Sim</label>
-            {cirurgia && (
-              <textarea placeholder="Descreva as cirurgias realizadas..." className="w-full border p-2 rounded mt-2"></textarea>
+            <label className="block font-medium mb-1">Tem alguma alergia?</label>
+            <label className="mr-4"><input type="radio" name="alergia" onClick={() => setAlergia(false)} /> Não</label>
+            <label><input type="radio" name="alergia" onClick= {()=>setAlergia(true)} /> Sim</label>
+            {alergia && (
+              <textarea placeholder="Quais são as alergias ?" className="w-full border p-2 rounded mt-2"></textarea>
             )}
           </div>
           <div>
-            <label className="block font-medium mb-1">Faz uso de remédio controlado?</label>
-            <label className="mr-4"><input type="radio" name="controlado" onClick={() => setControlado(false)} /> Não</label>
-            <label><input type="radio" name="controlado" onClick={()=>setControlado(true)} /> Sim</label>
-            {controlado && (
-              <textarea placeholder="Quais remédios controlados utiliza?" className="w-full border p-2 rounded mt-2"></textarea>
+            <label className="block font-medium mb-1">Faz uso de algum medicamento?</label>
+            <label className="mr-4"><input type="radio" name="medicamento" onClick={() => setMedicamento(false)} /> Não</label>
+            <label><input type="radio" name="medicamento" onClick={()=>setMedicamento(true)} /> Sim</label>
+            {medicamento && (
+              <textarea placeholder="Quais medicamentos você faz uso?" className="w-full border p-2 rounded mt-2"></textarea>
             )}
           </div>
           <div>
-            <label className="block font-medium mb-1">Faz uso de remédio contínuo?</label>
-            <label className="mr-4"><input type="radio" name="continuo" /> Não</label>
-            <label><input type="radio" name="continuo" /> Sim</label>
+            <label className="block font-medium mb-1">Possue alguma condição médica?</label>
+            <label className="mr-4"><input type="radio" name="condicao" onClick={()=>setCondicao(false)} /> Não</label>
+            <label><input type="radio" name="condicao" onClick={()=>setCondicao(true)}/> Sim</label>
+            {condicao && (
+              <textarea placeholder="Qual sua condição ?" className="w-full border p-2 rounded mt-2"></textarea>
+            )}
           </div>
           <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mt-2">Salvar</button>
         </div>
