@@ -1,11 +1,80 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import LoadingFormulario from "../../components/loadings/LoadingFormulario";
 
 export default function Formulario() {
-  const [alergia, setAlergia] = useState(false);
-  const [medicamento, setMedicamento] = useState(false);
-  const [condicao, setCondicao] = useState(false);
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    altura: "",
+    peso: "",
+    sexo: "",
+    alergias: "",
+    medicamento: "",
+    condicaoMedica: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const idPaciente = localStorage.getItem("idPaciente");
+
+    if (!idPaciente) {
+      setMensagem("Erro: ID do paciente não encontrado.");
+      return;
+    }
+
+    const formDataToSend = {
+      idPaciente,
+      altura: formData.altura,
+      peso: formData.peso,
+      sexo: formData.sexo,
+      alergias: formData.alergias || "Não",
+      medicamento: formData.medicamento || "Não",
+      condicaoMedica: formData.condicaoMedica || "Não",
+    };
+
+    try {
+      setLoading(true);
+      const response = await fetch("/api/formulario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataToSend),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensagem("Formulário enviado com sucesso!");
+        setTimeout(() => {
+          router.push("/login/paciente");
+        }, 2000);
+      } else {
+        setMensagem(data.error || "Erro ao enviar formulário.");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      setMensagem("Erro ao conectar com o servidor.");
+    }
+  };
+  if (loading){
+    return <LoadingFormulario/>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -14,43 +83,88 @@ export default function Formulario() {
           <span>MyDoctorPal</span>
           <span>Formulário Médico</span>
         </div>
-        <div className="p-6 space-y-4 text-sm">
+        <form className="p-6 space-y-4 text-sm" onSubmit={handleSubmit}>
           <h3 className="font-semibold text-gray-800 text-base">Informações Médicas Essenciais</h3>
+
           <div className="flex gap-4">
-            <input placeholder="Altura (cm)" className="w-full border p-2 rounded" />
-            <input placeholder="Peso (kg)" className="w-full border p-2 rounded" />
+            <input
+              placeholder="Altura (cm)"
+              className="w-full border p-2 rounded"
+              name="altura"
+              value={formData.altura}
+              onChange={handleChange}
+            />
+            <input
+              placeholder="Peso (kg)"
+              className="w-full border p-2 rounded"
+              name="peso"
+              value={formData.peso}
+              onChange={handleChange}
+            />
           </div>
+
           <div>
             <label className="font-medium block mb-1">Sexo:</label>
-            <label className="mr-4"><input type="radio" name="sexo" /> Masculino</label>
-            <label><input type="radio" name="sexo" /> Feminino</label>
+            <label className="mr-4">
+              <input
+                type="radio"
+                name="sexo"
+                value="Masculino"
+                checked={formData.sexo === "Masculino"}
+                onChange={handleChange}
+              />{" "}
+              Masculino
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="sexo"
+                value="Feminino"
+                checked={formData.sexo === "Feminino"}
+                onChange={handleChange}
+              />{" "}
+              Feminino
+            </label>
           </div>
+
           <div>
-            <label className="block font-medium mb-1">Tem alguma alergia?</label>
-            <label className="mr-4"><input type="radio" name="alergia" onClick={() => setAlergia(false)} /> Não</label>
-            <label><input type="radio" name="alergia" onClick= {()=>setAlergia(true)} /> Sim</label>
-            {alergia && (
-              <textarea placeholder="Quais são as alergias ?" className="w-full border p-2 rounded mt-2"></textarea>
-            )}
+            <label className="block font-medium mb-1">Alergias (caso não tenha, escreva "Não"):</label>
+            <textarea
+              name="alergias"
+              className="w-full border p-2 rounded"
+              value={formData.alergias}
+              onChange={handleChange}
+            />
           </div>
+
           <div>
-            <label className="block font-medium mb-1">Faz uso de algum medicamento?</label>
-            <label className="mr-4"><input type="radio" name="medicamento" onClick={() => setMedicamento(false)} /> Não</label>
-            <label><input type="radio" name="medicamento" onClick={()=>setMedicamento(true)} /> Sim</label>
-            {medicamento && (
-              <textarea placeholder="Quais medicamentos você faz uso?" className="w-full border p-2 rounded mt-2"></textarea>
-            )}
+            <label className="block font-medium mb-1">Medicamentos (caso não use, escreva "Não"):</label>
+            <textarea
+              name="medicamento"
+              className="w-full border p-2 rounded"
+              value={formData.medicamento}
+              onChange={handleChange}
+            />
           </div>
+
           <div>
-            <label className="block font-medium mb-1">Possue alguma condição médica?</label>
-            <label className="mr-4"><input type="radio" name="condicao" onClick={()=>setCondicao(false)} /> Não</label>
-            <label><input type="radio" name="condicao" onClick={()=>setCondicao(true)}/> Sim</label>
-            {condicao && (
-              <textarea placeholder="Qual sua condição ?" className="w-full border p-2 rounded mt-2"></textarea>
-            )}
+            <label className="block font-medium mb-1">Condições médicas (caso não tenha, escreva "Não"):</label>
+            <textarea
+              name="condicaoMedica"
+              className="w-full border p-2 rounded"
+              value={formData.condicaoMedica}
+              onChange={handleChange}
+            />
           </div>
-          <button className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mt-2">Salvar</button>
-        </div>
+
+          <button
+            className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mt-2"
+            type="submit"
+          >
+            Salvar
+          </button>
+        </form>
+        {mensagem && <p className="text-green-500 text-sm text-center">{mensagem}</p>}
       </div>
     </div>
   );

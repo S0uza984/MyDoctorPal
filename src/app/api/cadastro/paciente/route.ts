@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       });
   
       // Retorna uma resposta de sucesso
-      return NextResponse.json({ message: "Paciente cadastrado com sucesso", paciente: novoPaciente });
+      return NextResponse.json({ message: "Paciente cadastrado com sucesso", paciente: {id: novoPaciente.ID_Paciente} });
     } catch (error) {
       console.error(error);
       // Retorna uma resposta de erro

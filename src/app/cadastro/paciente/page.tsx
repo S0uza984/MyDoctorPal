@@ -26,6 +26,7 @@ export default function CadastroPaciente() {
       return;
     }
     try {
+      setLoading(true);
       const response = await fetch("/api/cadastro/paciente", {
         method: "POST",
         headers: {
@@ -37,7 +38,7 @@ export default function CadastroPaciente() {
       const data = await response.json(); // Converte a resposta para objeto JavaScript
 
       if (response.ok) {
-        setLoading(true);
+        localStorage.setItem("idPaciente", data.paciente.id);
         setMensagem(data.message || "Paciente cadastrado com sucesso!");
         setTimeout( () => {
           Router.push("/formulario")},
