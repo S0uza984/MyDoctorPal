@@ -128,7 +128,7 @@ export default function Formulario() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1">Alergias (caso não tenha, escreva "Não"):</label>
+            <label className="block font-medium mb-1">Alergias (caso não tenha, escreva &quot;Não&quot;):</label>
             <textarea
               name="alergias"
               className="w-full border p-2 rounded"
@@ -138,7 +138,7 @@ export default function Formulario() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1">Medicamentos (caso não use, escreva "Não"):</label>
+            <label className="block font-medium mb-1">Medicamentos (caso não use, escreva &quot;Não&quot;):</label>
             <textarea
               name="medicamento"
               className="w-full border p-2 rounded"
@@ -148,7 +148,7 @@ export default function Formulario() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1">Condições médicas (caso não tenha, escreva "Não"):</label>
+            <label className="block font-medium mb-1">Condições médicas (caso não tenha, escreva &quot;Não&quot;):</label>
             <textarea
               name="condicaoMedica"
               className="w-full border p-2 rounded"
