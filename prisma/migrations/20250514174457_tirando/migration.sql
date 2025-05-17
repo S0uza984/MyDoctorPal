@@ -17,3 +17,7 @@ ALTER TABLE `formularios` DROP COLUMN `Alergias`,
     ADD COLUMN `Alergia` VARCHAR(100) NULL,
     MODIFY `Condicao_Medica` VARCHAR(100) NULL,
     MODIFY `Medicamento` VARCHAR(100) NULL;
+    
+-- AlterTable
+ALTER TABLE `consultas` DROP COLUMN `Data_`,
+CHANGE COLUMN `Horario` `Data_Horario` DATETIME NOT NULL;

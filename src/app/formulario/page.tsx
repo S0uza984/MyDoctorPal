@@ -62,14 +62,17 @@ export default function Formulario() {
       if (response.ok) {
         setMensagem("Formulário enviado com sucesso!");
         setTimeout(() => {
+          setLoading(false);
           router.push("/login/paciente");
         }, 2000);
       } else {
         setMensagem(data.error || "Erro ao enviar formulário.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       setMensagem("Erro ao conectar com o servidor.");
+      setLoading(false);
     }
   };
   if (loading){
