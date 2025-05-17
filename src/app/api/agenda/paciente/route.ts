@@ -69,7 +69,7 @@ export async function POST(request: Request) {
         );
     }
 
-    // Verifica se todos o paciente tem outra consulta nesse mesmo dia e horario
+    // Verifica se o paciente tem outra consulta nesse mesmo dia e horario
     const agendamentoExistentePaciente = await prisma.consultas.findFirst({
       where: {
         ID_Paciente: paciente.ID_Paciente,
