@@ -9,7 +9,7 @@ export default function PerfilPage() {
   const [usuario, setUsuario] = useState(null); // Inicializado como null
   const [formulario, setFormulario] = useState(null); // Inicializado como null
   const [isLoading, setIsLoading] = useState(true); // Estado de carregamento
-  const [idade, setIdade] = useState(null); // Estado para idade
+  const [idade, setIdade] = useState(100); // Estado para idade
   const idPaciente = session?.user?.id; // ID do paciente logado
 
   console.log("Sessão no frontend:", session);
@@ -52,7 +52,8 @@ export default function PerfilPage() {
             const nascimento = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
             if (!isNaN(nascimento.getTime())) {
               const hoje = new Date();
-              let idade = hoje.getFullYear() - nascimento.getFullYear();
+              let idade = 0;
+              idade = hoje.getFullYear() - nascimento.getFullYear();
         
               const mesAtual = hoje.getMonth();
               const diaAtual = hoje.getDate();
@@ -65,7 +66,7 @@ export default function PerfilPage() {
               }
         
               console.log("Idade calculada corretamente:", idade);
-              setIdade(idade);
+              setIdade((prevIdade) => idade);
             } else {
               console.error("Erro ao criar a data de nascimento:", data.paciente.Nascimento);
             }
@@ -108,9 +109,6 @@ export default function PerfilPage() {
   useEffect(() => {
     console.log("Estado de usuario atualizado:", usuario);
   }, [usuario]);
-  useEffect(() => {
-  console.log("Idade atualizada DWON:", idade);
-  }, [idade]);
 
   if (isLoading) {
     return <p>Carregando...</p>;
