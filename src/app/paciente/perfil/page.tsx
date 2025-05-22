@@ -167,9 +167,7 @@ export default function PerfilPage() {
               <p><strong>Idade:</strong> {`${idade} anos`}</p>
               <p><strong>Sexo:</strong> {formulario?.Sexo ?? ""}</p>
               <p><strong>Peso:</strong> {`${formulario?.Peso ?? ""} kg`}</p>
-              <p><strong>Altura:</strong> {`${formulario?.Altura ?? ""} metros`}</p>
-              <p><strong>Alergias:</strong> {formulario?.Alergia ?? ""}</p>
-              <p><strong>Medicamentos em uso:</strong> {formulario?.Medicamento ?? ""}</p>
+              <p><strong>Altura:</strong> {`${((formulario?.Altura ?? 0) / 100).toFixed(2).replace('.', ',')} metros`}</p>              <p><strong>Medicamentos em uso:</strong> {formulario?.Medicamento ?? ""}</p>
               <p><strong>Condições médicas:</strong> {formulario?.Condicao_Medica ?? ""}</p>
             </div>
           </div>
