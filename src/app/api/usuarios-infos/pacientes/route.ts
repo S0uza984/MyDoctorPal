@@ -1,31 +1,26 @@
 import { PrismaClient } from "../../../../generated/prisma";
 import { NextResponse } from "next/server";
+import { auth } from "../../../../auth"; 
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     
   try {
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Token não fornecido" }, { status: 401 });
+    const session = await auth();
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Usuário não autenticado." }, { status: 401 });
     }
 
-    const tokenParts = authHeader.split(" ");
-    const idUsuario = parseInt(tokenParts[1]); // Extrai o ID do token
-    console.log("ID do Usuário:", idUsuario);
+    const idUsuario = session?.user?.id; 
 
-    if (isNaN(idUsuario)) {
-      return NextResponse.json({ error: "ID do usuário inválido" }, { status: 400 });
-    }
 
-    // Busca o paciente associado ao usuário
-    const paciente = await prisma.pacientes.findUnique({
-      where: { ID_Paciente: idUsuario },
+    const paciente = await prisma.pacientes.findFirst({
+      where: { ID: parseInt(idUsuario) },
     });
-
-    if (!paciente) {
-      return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
+    
+    if (!paciente.ID_Paciente) {
+      return NextResponse.json({ error: "Paciente não encontrado." }, { status: 404 });
     }
 
     // Busca os dados do formulário médico associado ao paciente
