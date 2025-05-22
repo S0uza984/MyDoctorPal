@@ -58,6 +58,7 @@ export async function POST(request: Request) {
       where: {
         ID_Medico: parseInt(body.medicoSelecionado),
         Data_Horario: dataHoraLocal,
+        Status_: "CONFIRMADA", // só consultas confirmadas
       },
     });
     
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
       where: {
         ID_Paciente: paciente.ID_Paciente,
         Data_Horario: dataHoraLocal,
+        Status_: "CONFIRMADA", // só consultas confirmadas
       },
     });
 

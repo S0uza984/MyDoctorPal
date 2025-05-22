@@ -19,7 +19,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleCancel = async (id) => {
-  const res = await fetch(`/api/consultas/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/consultas/${id}`, { method: "PATCH" });
   const data = await res.json();
   console.log("Resposta do backend:", data); // Veja a resposta aqui!
   setUpcomingAppointments(prev => prev.filter(a => a.ID_Consulta !== id));

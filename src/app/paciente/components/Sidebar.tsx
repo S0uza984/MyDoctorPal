@@ -15,6 +15,9 @@ export default function Sidebar() {
   ];
 
   const { data: session } = useSession();
+  if (!session || !session.user || !session.user.name) {
+    return <div>Carregando...</div>;
+  }
   const nomePaciente = session.user.name.split(' ')[0].charAt(0).toUpperCase() + session.user.name.split(' ')[0].slice(1).toLowerCase();
   console.log("Nome do Paciente:", nomePaciente);
   return (

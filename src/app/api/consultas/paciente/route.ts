@@ -7,6 +7,9 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     const session = await auth();
+    if (!session || !session.user) {
+        return NextResponse.json({ error: "Usuário não autenticado." }, { status: 401 });
+    }
     const idUsuario = session?.user?.id; 
    
     const paciente = await prisma.pacientes.findFirst({
@@ -26,6 +29,7 @@ export async function GET(request: Request) {
     where: {
         ID_Paciente: paciente.ID_Paciente,
         Data_Horario: { gte: now }, // só futuras  
+        Status_: "CONFIRMADA", // só consultas confirmadas
         },
     orderBy: { Data_Horario: 'asc' },
     take: 7,
