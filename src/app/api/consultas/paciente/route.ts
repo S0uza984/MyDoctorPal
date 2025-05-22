@@ -41,6 +41,6 @@ export async function GET(request: Request) {
     });
     return { ...consulta, medico };
     }));
-    //console.log("Consultas encontradas:", consultas, consultasComMedico);
+    console.log("Consultas encontradas:", consultas, consultasComMedico);
     return NextResponse.json({ consultas: consultasComMedico });
 }
