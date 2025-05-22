@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
     const tokenParts = authHeader.split(" ");
     const idUsuario = parseInt(tokenParts[1]); // Extrai o ID do token
-    console.log("ID do Usuário: CCCC", idUsuario);
+    console.log("ID do Usuário:", idUsuario);
 
     if (isNaN(idUsuario)) {
       return NextResponse.json({ error: "ID do usuário inválido" }, { status: 400 });
