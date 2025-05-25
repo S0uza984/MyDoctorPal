@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import AgendamentoSucesso from "./AgendamentoSucesso";
 
 export default function AgendamentoForm() {
   const [dataSelecionada, setDataSelecionada] = useState("");
@@ -13,6 +14,7 @@ export default function AgendamentoForm() {
   const { data: session } = useSession();
   const idUsuario = session?.user?.id;
   const [mensagem, setMensagem] = useState("");
+  const [sucesso, setSucesso] = useState(false);
 
   useEffect(() => {
     fetch("/api/agenda/paciente")
@@ -45,10 +47,14 @@ export default function AgendamentoForm() {
   const data = await res.json();
   if (res.ok && data.ok) {
     setMensagem("Agendamento realizado com sucesso!");
+    setSucesso(true);
   } else {
     setMensagem(data.error || "Erro ao agendar.");
   }
 };
+if(sucesso){
+    return <AgendamentoSucesso />;
+  }
 
   return (
     <form className="space-y-4" onSubmit={handleAgendar}>
