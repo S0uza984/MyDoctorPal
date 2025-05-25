@@ -59,20 +59,24 @@ export default function HistoricoPage() {
   console.log("Qtd consultas:", historico.length, historico);
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="flex-1 p-4" style={{ maxHeight: '100vh', overflowY: 'auto' }}>
-        <h1 className="text-xl font-bold mb-4">Histórico de Consultas</h1>
-        {error && <div className="text-red-500 mb-2">{error}</div>}
-        <div className="space-y-3">
-          {historico.map((h, i) => (
+  <div className="flex h-screen bg-gray-100">
+    <div className="flex-1 p-4" style={{ maxHeight: '100vh', overflowY: 'auto' }}>
+      <h1 className="text-xl font-bold mb-4">Histórico de Consultas</h1>
+      {error && <div className="text-red-500 mb-2">{error}</div>}
+      <div className="space-y-3">
+        {historico.length > 0 ? (
+          historico.map((h, i) => (
             <div key={i} className="border rounded-lg p-3 bg-gray-50">
               <h4 className="font-bold">{h.doctor}</h4>
               <p className="text-gray-600">{h.specialty}</p>
               <p className="text-sm">{h.date} - {h.time}</p>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p className="text-gray-500 italic">Você não tem histórico de consultas.</p>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 }
