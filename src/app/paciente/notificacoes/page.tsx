@@ -80,13 +80,17 @@ export default function NotificacoesPage() {
         <h1 className="text-xl font-bold mb-4">Notificações</h1>
         {error && <div className="text-red-500 mb-2">{error}</div>}
         <div className="space-y-3">
-          {notifications.map(n => (
-            <div key={n.id} className={`p-3 rounded-lg border ${n.type === 'CONFIRMADA' ? 'bg-blue-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
-              <h3 className="font-bold">{n.type === 'CONFIRMADA' ? 'Consulta Confirmada' : 'Consulta Cancelada'}</h3>
-              <p>{n.doctor}</p>
-              <p className="text-sm">{n.date} - {n.time}</p>
-            </div>
-          ))}
+          {notifications.length > 0 ? (
+            notifications.map(n => (
+              <div key={n.id} className={`p-3 rounded-lg border ${n.type === 'CONFIRMADA' ? 'bg-blue-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
+                <h3 className="font-bold">{n.type === 'CONFIRMADA' ? 'Consulta Confirmada' : 'Consulta Cancelada'}</h3>
+                <p>{n.doctor}</p>
+                <p className="text-sm">{n.date} - {n.time}</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">Você não tem notificações.</p>
+          )}
         </div>
       </div>
     </div>
