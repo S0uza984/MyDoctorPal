@@ -2,19 +2,30 @@
 import { useState } from 'react';
 
 type Props = {
-  patient: {
-    id: number;
-    patient: string;
-    age: number;
-    reason?: string;
-    date: string;
-    time: string;
-  };
+  patient: any; // agora recebe o objeto completo da consulta
   onClose: () => void;
 };
 
 export default function PatientDetailsModal({ patient, onClose }: Props) {
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState(patient.anotacao?.[0]?.Conteudo || '');
+  const [saving, setSaving] = useState(false);
+
+  const usuario = patient.pacientes?.usuarios;
+  const formulario = patient.pacientes?.formularios?.[0];
+
+  async function handleSave() {
+    setSaving(true);
+    await fetch(`/api/anotacao`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idConsulta: patient.ID_Consulta,
+        conteudo: notes,
+      }),
+    });
+    setSaving(false);
+    onClose();
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -25,25 +36,24 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-bold">{patient.patient}</h3>
-          <p className="text-gray-600">Idade: {patient.age} anos</p>
+          <h3 className="text-lg font-bold">{usuario?.Nome}</h3>
+          <p className="text-gray-600">Idade: {formulario ? formulario.Idade || '' : ''}</p>
           <p className="text-gray-600">
-            Consulta: {patient.date.replace('2025-04-', '')}/04 às {patient.time}
+            Consulta: {new Date(patient.Data_Horario).toLocaleDateString()} às {new Date(patient.Data_Horario).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
 
         <div className="mb-6">
           <h4 className="font-medium mb-2">Informações Médicas</h4>
           <div className="bg-gray-50 p-3 rounded border mb-3">
-            <p><strong>Alergias:</strong> Penicilina</p>
-            <p><strong>Medicamentos em uso:</strong> Losartana</p>
-            <p><strong>Condições médicas:</strong> Hipertensão</p>
+            <p><strong>Alergias:</strong> {formulario?.Alergia || '-'}</p>
+            <p><strong>Medicamentos em uso:</strong> {formulario?.Medicamento || '-'}</p>
+            <p><strong>Condições médicas:</strong> {formulario?.Condicao_Medica || '-'}</p>
           </div>
-
-          {patient.reason && (
+          {patient.Descricao && (
             <div>
               <h4 className="font-medium mb-1">Motivo da Consulta</h4>
-              <p className="bg-blue-50 p-3 rounded border">{patient.reason}</p>
+              <p className="bg-blue-50 p-3 rounded border">{patient.Descricao}</p>
             </div>
           )}
         </div>
@@ -80,13 +90,11 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
             Fechar
           </button>
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            onClick={() => {
-              alert('Anotações salvas com sucesso!');
-              onClose();
-            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            onClick={handleSave}
+            disabled={saving}
           >
-            Salvar Anotações
+            {saving ? 'Salvando...' : 'Salvar Anotações'}
           </button>
         </div>
       </div>

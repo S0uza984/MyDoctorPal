@@ -1,19 +1,37 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PatientDetailsModal from '../components/PatientDetailModal';
 
 export default function AgendaPage() {
-  const [appointments] = useState([
-    { id: 1, patient: 'Pedro Dias', age: 35, reason: '', date: '2025-04-29', time: '09:00', day: 'Sex' },
-    { id: 2, patient: 'Ana Costa', age: 28, reason: 'Dor de cabeça frequente', date: '2025-04-29', time: '11:00', day: 'Qua' },
-    { id: 3, patient: 'João Silva', age: 42, reason: 'Dores no peito e falta de ar', date: '2025-04-29', time: '14:30', day: 'Ter' }
-  ]);
-
+  const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
 
   const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
   const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
+
+  useEffect(() => {
+    async function fetchConsultas() {
+      const res = await fetch('/api/consultas/medico');
+      const data = await res.json();
+      if (data.consultas) {
+        // Mapeia para o formato esperado pelo componente
+        setAppointments(
+          data.consultas.map((c: any) => ({
+            id: c.ID_Consulta,
+            patient: c.pacientes.usuarios.Nome,
+            age: c.pacientes.formularios?.[0]?.Idade || '',
+            reason: c.Descricao,
+            date: c.Data_Horario.split('T')[0],
+            time: c.Data_Horario.split('T')[1]?.slice(0,5),
+            day: new Date(c.Data_Horario).toLocaleDateString('pt-BR', { weekday: 'short' }),
+            full: c
+          }))
+        );
+      }
+    }
+    fetchConsultas();
+  }, []);
 
   return (
     <div className="p-4">
@@ -38,7 +56,7 @@ export default function AgendaPage() {
                     <div
                       className="absolute inset-1 bg-blue-100 rounded p-2 cursor-pointer"
                       onClick={() => {
-                        setSelectedPatient(apt);
+                        setSelectedPatient(apt.full);
                         setShowModal(true);
                       }}
                     >
