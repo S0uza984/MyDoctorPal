@@ -37,5 +37,30 @@ export async function GET(request: Request) {
     },
   });
 
-  return NextResponse.json({ consultas });
-} 
+  // Para cada consulta, busca o histórico do paciente (consultas CONFIRMADA e anteriores à data atual)
+  const consultasComHistorico = await Promise.all(
+    consultas.map(async (consulta) => {
+      const historico = await prisma.consultas.findMany({
+        where: {
+          ID_Paciente: consulta.ID_Paciente,
+          Status_: "CONFIRMADA",
+          Data_Horario: { lt: new Date() },
+        },
+        orderBy: { Data_Horario: "desc" },
+        select: {
+          ID_Consulta: true,
+          Data_Horario: true,
+          Descricao: true,
+        },
+      });
+      return {
+        ...consulta,
+        historico,
+        // Inclui a data de nascimento do paciente (caso esteja em pacientes)
+        dataNascimento: consulta.pacientes?.Nascimento || null,
+      };
+    })
+  );
+
+  return NextResponse.json({ consultas: consultasComHistorico });
+}

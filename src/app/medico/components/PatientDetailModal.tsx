@@ -2,9 +2,27 @@
 import { useState } from 'react';
 
 type Props = {
-  patient: any; // agora recebe o objeto completo da consulta
+  patient: any;
   onClose: () => void;
 };
+
+// Função para calcular idade a partir da data de nascimento (YYYY-MM-DD)
+function calcularIdade(dataNascimento: string) {
+  if (!dataNascimento) return '';
+  const hoje = new Date();
+  const partes = dataNascimento.split('-');
+  const ano = parseInt(partes[0], 10);
+  const mes = parseInt(partes[1], 10) - 1;
+  const dia = parseInt(partes[2], 10);
+  const nascimento = new Date(ano, mes, dia);
+
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const m = hoje.getMonth() - nascimento.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+    idade--;
+  }
+  return idade;
+}
 
 export default function PatientDetailsModal({ patient, onClose }: Props) {
   const [notes, setNotes] = useState(patient.anotacao?.[0]?.Conteudo || '');
@@ -12,6 +30,11 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
 
   const usuario = patient.pacientes?.usuarios;
   const formulario = patient.pacientes?.formularios?.[0];
+  const dataNascimento = patient.dataNascimento || patient.pacientes?.Data_Nascimento || '';
+
+  // Corrige o fuso horário manualmente (soma 3 horas)
+  const dateObj = new Date(patient.Data_Horario);
+  dateObj.setHours(dateObj.getHours() + 3);
 
   async function handleSave() {
     setSaving(true);
@@ -37,9 +60,12 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
 
         <div className="mb-6">
           <h3 className="text-lg font-bold">{usuario?.Nome}</h3>
-          <p className="text-gray-600">Idade: {formulario ? formulario.Idade || '' : ''}</p>
           <p className="text-gray-600">
-            Consulta: {new Date(patient.Data_Horario).toLocaleDateString()} às {new Date(patient.Data_Horario).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            Idade: {dataNascimento ? calcularIdade(dataNascimento) : ''}
+          </p>
+          <p className="text-gray-600">
+            Consulta: {dateObj.toLocaleDateString('pt-BR')} às{" "}
+            {dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
 
@@ -61,14 +87,18 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
         <div className="mb-6">
           <h4 className="font-medium mb-2">Histórico de Consultas</h4>
           <div className="space-y-2">
-            <div className="bg-gray-50 p-2 rounded border">
-              <p className="font-medium">15/03/2025</p>
-              <p className="text-sm">Queixa de dores no peito. Exames cardíacos solicitados.</p>
-            </div>
-            <div className="bg-gray-50 p-2 rounded border">
-              <p className="font-medium">28/02/2025</p>
-              <p className="text-sm">Consulta de rotina. Pressão arterial estável.</p>
-            </div>
+            {patient.historico && patient.historico.length > 0 ? (
+              patient.historico.map((h: any, idx: number) => (
+                <div key={idx} className="bg-gray-50 p-2 rounded border">
+                  <p className="font-medium">
+                    {new Date(h.Data_Horario).toLocaleDateString('pt-BR')}
+                  </p>
+                  <p className="text-sm">{h.Descricao}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">Nenhum histórico encontrado.</p>
+            )}
           </div>
         </div>
 
