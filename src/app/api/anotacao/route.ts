@@ -19,10 +19,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Médico não encontrado." }, { status: 404 });
   }
 
-  // Busca as consultas do médico com anotações
+  // Busca as consultas do médico com anotações e status CONFIRMADA
   const consultas = await prisma.consultas.findMany({
     where: {
       ID_Medico: medico.ID_Medico,
+      Status_: "CONFIRMADA", // <-- Adicionado filtro aqui
     },
     orderBy: { Data_Horario: "desc" },
     include: {
@@ -99,4 +100,4 @@ export async function POST(request: Request) {
     console.error("Erro ao salvar anotação:", error);
     return NextResponse.json({ error: "Erro ao salvar anotação." }, { status: 500 });
   }
-} 
+}
