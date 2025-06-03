@@ -18,10 +18,7 @@ export async function middleware(req) {
  if(pathname.startsWith("/medico") && role !== "medico"){
     return NextResponse.redirect(new URL("/nao-permitida", req.url));
  }
-  // Permite que a requisição continue
-  return NextResponse.next();
 }
-
 // Configuração para aplicar o middleware apenas nas rotas protegidas
 export const config = {
   matcher: ["/paciente/:path*", "/medico/:path*"], // Aplica o middleware apenas nas rotas relevantes
