@@ -4,7 +4,7 @@ import { useState } from 'react';
 type Props = {
   patient: any;
   onClose: () => void;
-};
+}
 
 // Função para calcular idade a partir da data de nascimento (YYYY-MM-DD)
 function calcularIdade(dataNascimento: string) {
@@ -27,6 +27,7 @@ function calcularIdade(dataNascimento: string) {
 export default function PatientDetailsModal({ patient, onClose }: Props) {
   const [notes, setNotes] = useState(patient.anotacao?.[0]?.Conteudo || '');
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const usuario = patient.pacientes?.usuarios;
   const formulario = patient.pacientes?.formularios?.[0];
@@ -37,17 +38,35 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
   dateObj.setHours(dateObj.getHours() + 3);
 
   async function handleSave() {
+    if (!notes.trim()) {
+      setError("Por favor, adicione uma anotação antes de salvar.");
+      return;
+    }
+
     setSaving(true);
-    await fetch(`/api/anotacao`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        idConsulta: patient.ID_Consulta,
-        conteudo: notes,
-      }),
-    });
-    setSaving(false);
-    onClose();
+    setError("");
+
+    try {
+      const response = await fetch(`/api/anotacao`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idConsulta: patient.ID_Consulta,
+          conteudo: notes,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar anotação');
+      }
+
+      onClose();
+    } catch (error) {
+      setError("Erro ao salvar anotação. Tente novamente.");
+      console.error("Erro ao salvar anotação:", error);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -105,14 +124,15 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
         <div>
           <h4 className="font-medium mb-2">Anotações da Consulta</h4>
           <textarea
-            className="w-full p-3 border rounded min-h-24"
+            className="w-full p-3 border rounded min-h-32 mb-2"
             placeholder="Digite suas anotações sobre a consulta aqui..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           ></textarea>
+          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
         </div>
 
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex justify-end space-x-2 mt-4">
           <button
             className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100"
             onClick={onClose}

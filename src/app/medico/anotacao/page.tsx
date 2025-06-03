@@ -1,43 +1,55 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function AnotacoesPage() {
-  const [patientsWithNotes, setPatientsWithNotes] = useState([
-    {
-      id: 1,
-      name: "João Silva",
-      lastConsultation: "20/04/2025",
-      notes: [
-        {
-          date: "20/04/2025",
-          content: "Paciente apresentou dores no peito e falta de ar. Solicitado ecocardiograma.",
-        },
-        {
-          date: "15/03/2025",
-          content: "Queixa de dores no peito. Receitado exames cardíacos.",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Ana Costa",
-      lastConsultation: "11/04/2025",
-      notes: [
-        {
-          date: "11/04/2025",
-          content: "Paciente com cefaleia frequente. Requisitada tomografia craniana.",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Pedro Dias",
-      lastConsultation: "09/04/2025",
-      notes: [],
-    },
-  ]);
-
+  const { data: session } = useSession();
+  const [patientsWithNotes, setPatientsWithNotes] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const response = await fetch('/api/anotacao');
+        const data = await response.json();
+        if (data.pacientes) {
+          setPatientsWithNotes(data.pacientes);
+        }
+      } catch (error) {
+        setError("Erro ao carregar anotações.");
+        console.error("Erro ao carregar anotações:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (session) {
+      fetchNotes();
+    }
+  }, [session]);
+
+  const filteredPatients = patientsWithNotes.filter(patient =>
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Carregando anotações...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
@@ -48,9 +60,11 @@ export default function AnotacoesPage() {
             type="text"
             placeholder="Buscar paciente..."
             className="w-full p-2 border rounded-md mb-4"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <div className="space-y-2">
-            {patientsWithNotes.map((patient) => (
+            {filteredPatients.map((patient) => (
               <div
                 key={patient.id}
                 className={`p-3 border rounded-md cursor-pointer ${
@@ -61,7 +75,9 @@ export default function AnotacoesPage() {
                 onClick={() => setSelectedPatient(patient)}
               >
                 <p className="font-medium">{patient.name}</p>
-                <p className="text-sm text-gray-600">Última consulta: {patient.lastConsultation}</p>
+                <p className="text-sm text-gray-600">
+                  Última consulta: {new Date(patient.lastConsultation).toLocaleDateString()}
+                </p>
                 <p className="text-xs text-gray-500">
                   {patient.notes.length} {patient.notes.length === 1 ? "anotação" : "anotações"}
                 </p>
@@ -77,7 +93,9 @@ export default function AnotacoesPage() {
                 <div className="space-y-4">
                   {selectedPatient.notes.map((note, index) => (
                     <div key={index} className="border rounded-lg p-4 bg-white">
-                      <p className="font-medium">Consulta: {note.date}</p>
+                      <p className="font-medium">
+                        Consulta: {new Date(note.date).toLocaleDateString()}
+                      </p>
                       <p className="text-gray-700">{note.content}</p>
                     </div>
                   ))}
