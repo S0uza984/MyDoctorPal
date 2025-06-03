@@ -7,31 +7,60 @@ export default function AgendaPage() {
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
-  const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
+  const timeSlots = ['08:00','09:00', '10:00', '11:00','12:00','13:00', '14:00', '15:00', '16:00', '17:00','18:00'];
+  const weekDays = ['seg', 'ter', 'qua', 'qui', 'sex'];
 
   useEffect(() => {
-    async function fetchConsultas() {
-      const res = await fetch('/api/consultas/medico');
-      const data = await res.json();
-      if (data.consultas) {
-        // Mapeia para o formato esperado pelo componente
-        setAppointments(
-          data.consultas.map((c: any) => ({
-            id: c.ID_Consulta,
-            patient: c.pacientes.usuarios.Nome,
-            age: c.pacientes.formularios?.[0]?.Idade || '',
-            reason: c.Descricao,
-            date: c.Data_Horario.split('T')[0],
-            time: c.Data_Horario.split('T')[1]?.slice(0,5),
-            day: new Date(c.Data_Horario).toLocaleDateString('pt-BR', { weekday: 'short' }),
-            full: c
-          }))
-        );
+  async function fetchConsultas() {
+    const res = await fetch('/api/consultas/medico');
+    const data = await res.json();
+    if (data.consultas) {
+      const hoje = new Date();
+      let inicioSemana, fimSemana;
+
+      if (hoje.getDay() === 0) {
+        // Se hoje é domingo, pega a próxima segunda
+        inicioSemana = new Date(hoje);
+        inicioSemana.setDate(hoje.getDate() + 1);
+      } else {
+        // Senão, pega a segunda da semana atual
+        const diffSegunda = 1 - hoje.getDay();
+        inicioSemana = new Date(hoje);
+        inicioSemana.setDate(hoje.getDate() + diffSegunda);
       }
+      inicioSemana.setHours(0, 0, 0, 0);
+
+      fimSemana = new Date(inicioSemana);
+      fimSemana.setDate(inicioSemana.getDate() + 4);
+      fimSemana.setHours(23, 59, 59, 999);
+
+      setAppointments(
+        data.consultas
+          .filter((c: any) => {
+            const dataConsulta = new Date(c.Data_Horario);
+            return dataConsulta >= inicioSemana && dataConsulta <= fimSemana;
+          })
+          .map((c: any) => {
+            const dateObj = new Date(c.Data_Horario);
+            const day = dateObj
+              .toLocaleDateString('pt-BR', { weekday: 'short' })
+              .replace('.', '')
+              .toLowerCase();
+            return {
+              id: c.ID_Consulta,
+              patient: c.pacientes.usuarios.Nome,
+              reason: c.Descricao,
+              date: c.Data_Horario.split('T')[0],
+              time: c.Data_Horario.split('T')[1]?.slice(0,5),
+              day,
+              full: c
+            };
+          })
+      );
     }
-    fetchConsultas();
-  }, []);
+  }
+  fetchConsultas();
+}, []);
 
   return (
     <div className="p-4">
@@ -47,7 +76,9 @@ export default function AgendaPage() {
 
         {weekDays.map((day, i) => (
           <div key={i} className="flex-1">
-            <div className="h-10 flex items-center justify-center font-bold border-b">{day}</div>
+            <div className="h-10 flex items-center justify-center font-bold border-b">
+              {day.charAt(0).toUpperCase() + day.slice(1)}
+            </div>
             {timeSlots.map((time, j) => {
               const apt = appointments.find(a => a.day === day && a.time === time);
               return (
@@ -61,7 +92,6 @@ export default function AgendaPage() {
                       }}
                     >
                       <p className="font-medium">{apt.patient}</p>
-                      <p className="text-xs">{apt.time}</p>
                     </div>
                   )}
                 </div>
