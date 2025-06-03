@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import LoadingFormulario from "../../components/loadings/LoadingFormulario";
+import { useSession } from "next-auth/react";
+import NaoPermitidaFormulario from "../../components/NaoPermitidaFormulario";
+import NaoPermitida from "../../components/NaoPermitida";
 
 export default function Formulario() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [formData, setFormData] = useState({
     altura: "",
     peso: "",
@@ -14,8 +17,38 @@ export default function Formulario() {
     medicamento: "",
     condicaoMedica: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [mensagem, setMensagem] = useState("");
+  const [naoPermitido, setNaoPermitido] = useState<"medico" | "paciente" | false>(false);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      // Se for médico, bloqueia imediatamente
+      if (session?.user?.role === "medico") {
+        setNaoPermitido("medico");
+        setLoading(false);
+        return;
+      }
+      // Se for paciente, checa se já respondeu o formulário
+      if (session?.user?.role === "paciente") {
+        fetch("/api/paciente/formulario-existe")
+          .then(res => res.json())
+          .then(data => {
+            if (data.jaPreenchido) {
+              setNaoPermitido("paciente");
+            }
+            setLoading(false);
+          });
+        return;
+      }
+      // Qualquer outro tipo de usuário, bloqueia (opcional)
+      setNaoPermitido("medico");
+      setLoading(false);
+    } else if (status === "unauthenticated") {
+      // Se não está autenticado, libera o formulário
+      setLoading(false);
+    }
+  }, [status, session]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -75,8 +108,20 @@ export default function Formulario() {
       setLoading(false);
     }
   };
-  if (loading){
-    return <LoadingFormulario/>;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-lg font-semibold">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (naoPermitido === "medico") {
+    return <NaoPermitida />;
+  }
+  if (naoPermitido === "paciente") {
+    return <NaoPermitidaFormulario />;
   }
 
   return (
@@ -88,7 +133,6 @@ export default function Formulario() {
         </div>
         <form className="p-6 space-y-4 text-sm" onSubmit={handleSubmit}>
           <h3 className="font-semibold text-gray-800 text-base">Informações Médicas Essenciais</h3>
-
           <div className="flex gap-4">
             <input
               placeholder="Altura (cm)"
@@ -105,7 +149,6 @@ export default function Formulario() {
               onChange={handleChange}
             />
           </div>
-
           <div>
             <label className="font-medium block mb-1">Sexo:</label>
             <label className="mr-4">
@@ -129,7 +172,6 @@ export default function Formulario() {
               Feminino
             </label>
           </div>
-
           <div>
             <label className="block font-medium mb-1">Alergias (caso não tenha, escreva &quot;Não&quot;):</label>
             <textarea
@@ -139,7 +181,6 @@ export default function Formulario() {
               onChange={handleChange}
             />
           </div>
-
           <div>
             <label className="block font-medium mb-1">Medicamentos (caso não use, escreva &quot;Não&quot;):</label>
             <textarea
@@ -149,7 +190,6 @@ export default function Formulario() {
               onChange={handleChange}
             />
           </div>
-
           <div>
             <label className="block font-medium mb-1">Condições médicas (caso não tenha, escreva &quot;Não&quot;):</label>
             <textarea
@@ -159,7 +199,6 @@ export default function Formulario() {
               onChange={handleChange}
             />
           </div>
-
           <button
             className="w-full bg-blue-500 text-white py-2 rounded-full font-semibold mt-2"
             type="submit"
