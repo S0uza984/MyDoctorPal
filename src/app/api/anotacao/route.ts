@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   const consultas = await prisma.consultas.findMany({
     where: {
       ID_Medico: medico.ID_Medico,
-      Status_: "CONFIRMADA", // <-- Adicionado filtro aqui
+      Status_: "CONFIRMADA",
     },
     orderBy: { Data_Horario: "desc" },
     include: {
@@ -36,17 +36,39 @@ export async function GET(request: Request) {
     },
   });
 
-  // Agrupa as consultas por paciente
+  // Agrupa as consultas por paciente, separando próxima e última consulta
   const pacientesComAnotacoes = consultas.reduce((acc, consulta) => {
     const pacienteId = consulta.pacientes.ID_Paciente;
     if (!acc[pacienteId]) {
       acc[pacienteId] = {
         id: pacienteId,
         name: consulta.pacientes.usuarios.Nome,
-        lastConsultation: consulta.Data_Horario,
+        lastConsultation: null,
+        nextConsultation: null,
         notes: [],
       };
     }
+    const dataConsulta = new Date(consulta.Data_Horario);
+    const agora = new Date();
+
+    // Próxima consulta futura
+    if (
+      dataConsulta > agora &&
+      (!acc[pacienteId].nextConsultation ||
+        dataConsulta < new Date(acc[pacienteId].nextConsultation))
+    ) {
+      acc[pacienteId].nextConsultation = consulta.Data_Horario;
+    }
+
+    // Última consulta passada
+    if (
+      dataConsulta <= agora &&
+      (!acc[pacienteId].lastConsultation ||
+        dataConsulta > new Date(acc[pacienteId].lastConsultation))
+    ) {
+      acc[pacienteId].lastConsultation = consulta.Data_Horario;
+    }
+
     if (consulta.anotacao && consulta.anotacao.length > 0) {
       acc[pacienteId].notes.push({
         date: consulta.Data_Horario,

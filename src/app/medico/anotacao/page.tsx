@@ -76,7 +76,11 @@ export default function AnotacoesPage() {
               >
                 <p className="font-medium">{patient.name}</p>
                 <p className="text-sm text-gray-600">
-                  Última consulta: {new Date(patient.lastConsultation).toLocaleDateString()}
+                  {patient.nextConsultation
+                    ? `Próxima consulta: ${new Date(patient.nextConsultation).toLocaleDateString()}`
+                    : patient.lastConsultation
+                      ? `Última consulta: ${new Date(patient.lastConsultation).toLocaleDateString()}`
+                      : "Nenhuma consulta encontrada"}
                 </p>
                 <p className="text-xs text-gray-500">
                   {patient.notes.length} {patient.notes.length === 1 ? "anotação" : "anotações"}
