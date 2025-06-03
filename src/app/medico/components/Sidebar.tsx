@@ -15,7 +15,6 @@ export default function Sidebar() {
 
   const links = [
     { href: "/medico/agenda", label: "Agenda" },
-    { href: "/medico/notificacao", label: "Notificações" },
     { href: "/medico/anotacao", label: "Anotações" },
     { href: "/medico/perfil", label: "Perfil" },
   ];

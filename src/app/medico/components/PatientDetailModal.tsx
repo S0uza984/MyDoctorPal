@@ -28,6 +28,7 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
   const [notes, setNotes] = useState(patient.anotacao?.[0]?.Conteudo || '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [canceling, setCanceling] = useState(false);
 
   const usuario = patient.pacientes?.usuarios;
   const formulario = patient.pacientes?.formularios?.[0];
@@ -66,6 +67,26 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
       console.error("Erro ao salvar anotação:", error);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleCancel() {
+    if (!window.confirm("Tem certeza que deseja cancelar esta consulta?")) return;
+    setCanceling(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/consultas/${patient.ID_Consulta}`, {
+        method: "PATCH",
+      });
+      if (!response.ok) {
+        throw new Error("Erro ao cancelar consulta.");
+      }
+      alert("Consulta cancelada!");
+      onClose();
+    } catch (err) {
+      setError("Erro ao cancelar consulta. Tente novamente.");
+    } finally {
+      setCanceling(false);
     }
   }
 
@@ -132,19 +153,28 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
           {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
         </div>
 
-        <div className="flex justify-end space-x-2 mt-4">
+        <div className="flex flex-col gap-2 mt-4">
+          <div className="flex justify-end space-x-2">
+            <button
+              className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100"
+              onClick={onClose}
+            >
+              Fechar
+            </button>
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? 'Salvando...' : 'Salvar Anotações'}
+            </button>
+          </div>
           <button
-            className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-100"
-            onClick={onClose}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            onClick={handleCancel}
+            disabled={canceling}
           >
-            Fechar
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? 'Salvando...' : 'Salvar Anotações'}
+            {canceling ? 'Cancelando...' : 'Cancelar Consulta'}
           </button>
         </div>
       </div>
