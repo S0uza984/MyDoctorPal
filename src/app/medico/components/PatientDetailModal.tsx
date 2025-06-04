@@ -33,7 +33,6 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
   const usuario = patient.pacientes?.usuarios;
   const formulario = patient.pacientes?.formularios?.[0];
   const dataNascimento = patient.dataNascimento || patient.pacientes?.Data_Nascimento || '';
-
   // Corrige o fuso horário manualmente (soma 3 horas)
   const dateObj = new Date(patient.Data_Horario);
   dateObj.setHours(dateObj.getHours() + 3);
@@ -124,23 +123,29 @@ export default function PatientDetailsModal({ patient, onClose }: Props) {
           )}
         </div>
 
-        <div className="mb-6">
-          <h4 className="font-medium mb-2">Histórico de Consultas</h4>
-          <div className="space-y-2">
-            {patient.historico && patient.historico.length > 0 ? (
-              patient.historico.map((h: any, idx: number) => (
-                <div key={idx} className="bg-gray-50 p-2 rounded border">
-                  <p className="font-medium">
-                    {new Date(h.Data_Horario).toLocaleDateString('pt-BR')}
-                  </p>
-                  <p className="text-sm">{h.Descricao}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">Nenhum histórico encontrado.</p>
+       <div className="mb-6">
+  <h4 className="font-medium mb-2">Histórico de Consultas</h4>
+  <div className="space-y-2">
+    {patient.historico && patient.historico.length > 0 ? (
+      patient.historico.map((h: any, idx: number) => (
+        <div key={idx} className="bg-gray-50 p-2 rounded border">
+          <p className="font-medium">
+            {new Date(h.Data_Horario).toLocaleDateString('pt-BR')}
+          </p>
+          <p className="text-sm">{h.Descricao}</p>
+          <p className="text-sm text-gray-700">
+            Doutor: <span className="font-semibold">{h.medicos?.usuarios?.Nome || '-'}</span>
+            {h.medicos?.Especialidade && (
+              <> &middot; Especialidade: <span>{h.medicos.Especialidade}</span></>
             )}
-          </div>
+          </p>
         </div>
+      ))
+    ) : (
+      <p className="text-sm text-gray-500">Nenhum histórico encontrado.</p>
+    )}
+  </div>
+</div>
 
         <div>
           <h4 className="font-medium mb-2">Anotações da Consulta</h4>

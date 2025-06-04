@@ -51,12 +51,21 @@ export async function GET(request: Request) {
           ID_Consulta: true,
           Data_Horario: true,
           Descricao: true,
+          medicos: {
+            select: {
+              Especialidade: true,
+              usuarios: {
+                select: {
+                  Nome: true,
+                },
+              },
+            },
+          },
         },
       });
       return {
         ...consulta,
         historico,
-        // Inclui a data de nascimento do paciente (caso esteja em pacientes)
         dataNascimento: consulta.pacientes?.Nascimento || null,
       };
     })
