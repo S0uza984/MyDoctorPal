@@ -2,13 +2,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import {useSession} from "next-auth/react"; // Importa o método de autenticação do NextAuth
 
 export default function Sidebar() {
   const pathname = usePathname();
+  
+  const { data: session } = useSession(); // Obtém a sessão do usuário
+  if (!session || !session.user || !session.user.name) {
+    return <div>Carregando...</div>;
+  }
+  const nome = session.user.name; // Obtém o nome do usuário da sessão, ou usa "Usuário" como padrão
 
   const links = [
     { href: "/medico/agenda", label: "Agenda" },
-    { href: "/medico/notificacao", label: "Notificações" },
     { href: "/medico/anotacao", label: "Anotações" },
     { href: "/medico/perfil", label: "Perfil" },
   ];
@@ -17,7 +23,7 @@ export default function Sidebar() {
     <div className="w-48 bg-white shadow-md">
       <div className="bg-blue-500 text-white p-4">
         <h1 className="text-xl font-bold">MyDoctorPal</h1>
-        <p className="text-sm">Dr. Carlos Silva</p>
+        <p className="text-sm"> Dr. {nome}</p>
       </div>
 
       <nav className="p-2">

@@ -1,55 +1,158 @@
 'use client';
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import AgendamentoSucesso from "./AgendamentoSucesso";
 
 export default function AgendamentoForm() {
+  const [dataSelecionada, setDataSelecionada] = useState("");
+  const [horarioSelecionado, setHorarioSelecionado] = useState("");
+  const [especialidades, setEspecialidades] = useState<string[]>([]);
+  const [medicos, setMedicos] = useState<any[]>([]);
+  const [especialidadeSelecionada, setEspecialidadeSelecionada] = useState("");
+  const [medicoSelecionado, setMedicoSelecionado] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const { data: session } = useSession();
+  const idUsuario = session?.user?.id;
+  const [mensagem, setMensagem] = useState("");
+  const [sucesso, setSucesso] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/agenda/paciente")
+      .then(res => res.json())
+      .then(data => {
+        setEspecialidades(data.especialidades);
+        setMedicos(data.medicos);
+      });
+  }, []);
+
+  const medicosFiltrados = especialidadeSelecionada
+    ? medicos.filter(m => m.especialidade === especialidadeSelecionada)
+    : [];
+
+  const handleAgendar = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const res = await fetch("/api/agenda/paciente", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      idUsuario,
+      medicoSelecionado,
+      dataSelecionada,
+      horarioSelecionado,
+      motivo,
+    }),
+  });
+
+  const data = await res.json();
+  if (res.ok && data.ok) {
+    setMensagem("Agendamento realizado com sucesso!");
+    setSucesso(true);
+  } else {
+    setMensagem(data.error || "Erro ao agendar.");
+  }
+};
+if(sucesso){
+    return <AgendamentoSucesso />;
+  }
+
   return (
-    <div className="space-y-4">
+    <form className="space-y-4" onSubmit={handleAgendar}>
       <div>
         <label className="block text-sm font-medium mb-1">Especialidade:</label>
-        <select className="w-full p-2 border rounded-md">
+        <select
+          className="w-full p-2 border rounded-md"
+          value={especialidadeSelecionada}
+          onChange={e => setEspecialidadeSelecionada(e.target.value)}
+          required
+        >
           <option value="">Selecione uma especialidade</option>
-          <option value="cardiologia">Cardiologia</option>
-          <option value="clinica-geral">Clínica Geral</option>
-          <option value="dermatologia">Dermatologia</option>
-          <option value="ortopedia">Ortopedia</option>
+          {especialidades.map(esp => (
+            <option key={esp} value={esp}>{esp}</option>
+          ))}
         </select>
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">Médico:</label>
-        <select className="w-full p-2 border rounded-md">
+        <select
+          className="w-full p-2 border rounded-md"
+          value={medicoSelecionado}
+          onChange={e => setMedicoSelecionado(e.target.value)}
+          required
+        >
           <option value="">Selecione um médico</option>
-          <option value="carlos-silva">Dr. Carlos Silva</option>
-          <option value="ana-souza">Dra. Ana Souza</option>
+          {medicosFiltrados.map(med => (
+            <option key={med.id} value={med.id}>{med.nome}</option>
+          ))}
         </select>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Data e Horário:</label>
-
-        <div className="grid grid-cols-5 gap-2 mb-2 text-center font-medium">
-          <div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div>
-        </div>
-
-        <div className="grid grid-cols-5 gap-2 mb-2">
-          {['09:00','09:30','10:00','10:30','11:00'].map(time => (
-            <button key={time} className="p-2 border rounded hover:bg-blue-100">
-              {time}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-5 gap-2">
-          {['14:00','14:30','15:00','15:30','16:00'].map(time => (
-            <button key={time} className="p-2 border rounded hover:bg-blue-100">
-              {time}
-            </button>
-          ))}
+        <label className="block text-sm font-medium mb-1">Data:</label>
+        <input
+          type="date"
+          className="w-full p-2 border rounded-md"
+          value={dataSelecionada}
+          onChange={e => setDataSelecionada(e.target.value)}
+          min={new Date().toISOString().split("T")[0]}
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Horário:</label>
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 11 }, (_, i) => {
+            const hora = 8 + i;
+            const horaStr = hora.toString().padStart(2, "0") + ":00";
+            return (
+              <button
+                key={horaStr}
+                type="button"
+                className={`p-2 rounded border font-semibold ${
+                  horarioSelecionado === horaStr
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-blue-500 border-blue-500"
+                }`}
+                onClick={() => setHorarioSelecionado(horaStr)}
+              >
+                {horaStr}
+              </button>
+            );
+          })}
         </div>
       </div>
-
-      <button className="bg-blue-500 text-white py-2 px-4 rounded-md w-full">
-        Confirmar
-      </button>
-    </div>
+       <div>
+        <label className="block text-sm font-medium mb-1">Motivo da consulta:</label>
+        <textarea
+          className="w-full p-2 border rounded-md"
+          value={motivo}
+          onChange={e => setMotivo(e.target.value)}
+          required
+          rows={2}
+          placeholder="Descreva o motivo da consulta"
+        />
+      </div>
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white py-1 px-6 rounded-full font-semibold mt-2 text-sm"
+          disabled={
+            !especialidadeSelecionada ||
+            !medicoSelecionado ||
+            !dataSelecionada ||
+            !horarioSelecionado ||
+            !motivo
+          }
+        >
+          Confirmar
+        </button>
+      </div>
+      {mensagem && (
+        <div className={`text-center text-sm mt-4 ${mensagem.includes("sucesso") ? "text-green-600" : "text-red-600"}`}>
+        {mensagem}
+        </div>
+        )}
+    </form>
   );
 }

@@ -32,7 +32,7 @@ export default function LoginFormP() {
     } else {
       console.log("Login bem-sucedido!");
       // Redireciona para o formulário após o login bem-sucedido
-      router.push("/paciente"); // Redireciona com router de next/navigation
+      router.push("/paciente/agenda"); // Redireciona com router de next/navigation
     }
 
     setLoading(false); // Remover o estado de carregamento após a tentativa
